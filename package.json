@@ -11,6 +11,7 @@
     "url": "https://github.com/feross/last-fm/issues"
   },
   "dependencies": {
+    "run-parallel": "^1.1.6",
     "simple-get": "^2.4.0"
   },
   "devDependencies": {

@@ -57,9 +57,27 @@ key is not required.
 
 `userAgent` can be a string to use as the `User-Agent` header in http requests.
 
+## Convenience API
+
+These APIs are not part of the LastFM documentation, but they use data from the API
+and process it into a more useful form.
+
+### `lastfm.search(opts, (err, data) => {})`
+
+Search for artists, tracks, or albums by name.
+
+This returns the "top result" across all result types, prioritizing an exact query
+match, if one exists. Otherwise, the most popular result by number of "listeners"
+is used.
+
+- `opts.q` - the search query
+- `opts.limit` - the number of each type of result to fetch
+
+## Album API
+
 ### `lastfm.albumGetInfo(opts, (err, data) => {})`
 
-Get the metadata and tracklist for an album on Last.fm using the album name or a musicbrainz id.
+Get the metadata and tracklist for an album on Last.fm using the album name.
 
 - [album.getInfo](http://www.last.fm/api/show/album.getInfo)
 
@@ -74,6 +92,8 @@ Get the top tags for an album on Last.fm, ordered by popularity.
 Search for an album by name. Returns album matches sorted by relevance.
 
 - [album.search](http://www.last.fm/api/show/album.search)
+
+## Artist API
 
 ### `lastfm.artistGetCorrection(opts, (err, data) => {})`
 
@@ -117,6 +137,8 @@ Search for an artist by name. Returns artist matches sorted by relevance.
 
 - [artist.search](http://www.last.fm/api/show/artist.search)
 
+## Chart API
+
 ### `lastfm.chartGetTopArtists(opts, (err, data) => {})`
 
 Get the top artists chart
@@ -133,6 +155,8 @@ Get the top tags chart
 
 Get the top tracks chart
 
+## Geo API
+
 - [chart.getTopTracks](http://www.last.fm/api/show/chart.getTopTracks)
 
 ### `lastfm.geoGetTopArtists(opts, (err, data) => {})`
@@ -146,6 +170,8 @@ Get the most popular artists on Last.fm by country
 Get the most popular tracks on Last.fm last week by country
 
 - [geo.getTopTracks](http://www.last.fm/api/show/geo.getTopTracks)
+
+## Tag API
 
 ### `lastfm.tagGetInfo(opts, (err, data) => {})`
 
@@ -181,6 +207,8 @@ Fetches the top global tags on Last.fm, sorted by popularity (number of times us
 
 Get the top tracks tagged by this tag, ordered by tag count.
 
+## Track API
+
 - [tag.getTopTracks](http://www.last.fm/api/show/tag.getTopTracks)
 
 ### `lastfm.tagGetWeeklyChartList(opts, (err, data) => {})`
@@ -197,7 +225,7 @@ Use the last.fm corrections data to check whether the supplied track has a corre
 
 ### `lastfm.trackGetInfo(opts, (err, data) => {})`
 
-Get the metadata for a track on Last.fm using the artist/track name or a musicbrainz id.
+Get the metadata for a track on Last.fm using the artist/track name.
 
 - [track.getInfo](http://www.last.fm/api/show/track.getInfo)
 
@@ -209,7 +237,7 @@ Get the similar tracks for this track on Last.fm, based on listening data.
 
 ### `lastfm.trackGetTopTags(opts, (err, data) => {})`
 
-Get the top tags for this track on Last.fm, ordered by tag count. Supply either track & artist name or mbid.
+Get the top tags for this track on Last.fm, ordered by tag count. Supply a track & artist name.
 
 - [track.getTopTags](http://www.last.fm/api/show/track.getTopTags)
 
