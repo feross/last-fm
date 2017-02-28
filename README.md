@@ -19,17 +19,18 @@ npm install last-fm
 
 The most useful data on LastFM is the public music data. When building an app that
 incorporates music data from LastFM, lots of functionality provided by the LastFM
-isn't necessary – authorizing as a user, liking tracks, adding/removing tags,
+API isn't necessary – authorizing as a user, liking tracks, adding/removing tags,
 getting a list of songs in the user's "library", etc.
 
-This package only provides the LastFM API methods that get data from the service,
-making it simpler than other LastFM libraries. If this suits your usecase, consider
-using this lighter-weight alternative to the other libraries.
+This package only provides the LastFM API methods that use GET requests to fetch
+data, making it **smaller and simpler** than the other LastFM libraries.
+
+If this matches your use case, consider using this package.
 
 ## Features
 
   - Powered by the [LastFM API](http://www.last.fm/api)
-  - Lightweight, only provides GET methods
+  - Lightweight library, only provides the GET methods from the Last.fm API
 
 ## Usage
 
@@ -54,7 +55,7 @@ Create a new LastFM API client with the given public API `key`.
 Since all the LastFM calls supported by this module access public data, the secret
 key is not required.
 
-`userAgent` can be a string to use as the `User-Agent` header in http calls.
+`userAgent` can be a string to use as the `User-Agent` header in http requests.
 
 ### `lastfm.albumGetInfo(opts, (err, data) => {})`
 
