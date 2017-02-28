@@ -1,0 +1,46 @@
+{
+  "name": "last-fm",
+  "description": "Simple, robust LastFM API client (for public data)",
+  "version": "0.0.0",
+  "author": {
+    "name": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "http://feross.org/"
+  },
+  "bugs": {
+    "url": "https://github.com/feross/last-fm/issues"
+  },
+  "dependencies": {
+    "simple-get": "^2.4.0"
+  },
+  "devDependencies": {
+    "standard": "*"
+  },
+  "homepage": "https://github.com/feross/last-fm",
+  "keywords": [
+    "lastfm",
+    "lastfm api",
+    "lastfm data",
+    "music",
+    "music api",
+    "music data",
+    "last fm",
+    "last fm api",
+    "last fm data",
+    "public data",
+    "get",
+    "data",
+    "api",
+    "last.fm",
+    "last.fm api"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/feross/last-fm.git"
+  },
+  "scripts": {
+    "test": "standard"
+  }
+}
