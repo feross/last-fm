@@ -155,6 +155,8 @@ Get the top tags chart
 
 Get the top tracks chart
 
+- [chart.getTopTracks](http://www.last.fm/api/show/chart.getTopTracks)
+
 ## Geo API
 
 - [chart.getTopTracks](http://www.last.fm/api/show/chart.getTopTracks)
@@ -206,6 +208,8 @@ Fetches the top global tags on Last.fm, sorted by popularity (number of times us
 ### `lastfm.tagGetTopTracks(opts, (err, data) => {})`
 
 Get the top tracks tagged by this tag, ordered by tag count.
+
+- [tag.getTopTracks](http://www.last.fm/api/show/tag.getTopTracks)
 
 ## Track API
 
