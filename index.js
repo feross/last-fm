@@ -88,7 +88,7 @@ class LastFM {
    * ALBUM API
    */
 
-  albumGetInfo (opts, cb) {
+  albumInfo (opts, cb) {
     if (!opts.artist || !opts.album) {
       return cb(new Error('Missing required params: artist, album'))
     }
@@ -99,7 +99,7 @@ class LastFM {
     this._sendRequest(opts, 'album', cb)
   }
 
-  albumGetTopTags (opts, cb) {
+  albumTopTags (opts, cb) {
     if (!opts.artist || !opts.album) {
       return cb(new Error('Missing required params: artist, album'))
     }
@@ -136,7 +136,7 @@ class LastFM {
    * ARTIST API
    */
 
-  artistGetCorrection (opts, cb) {
+  artistCorrection (opts, cb) {
     if (!opts.artist) {
       return cb(new Error('Missing required param: artist'))
     }
@@ -144,7 +144,7 @@ class LastFM {
     this._sendRequest(opts, 'corrections', cb)
   }
 
-  artistGetInfo (opts, cb) {
+  artistInfo (opts, cb) {
     if (!opts.artist) {
       return cb(new Error('Missing required param: artist'))
     }
@@ -155,7 +155,7 @@ class LastFM {
     this._sendRequest(opts, 'artist', cb)
   }
 
-  artistGetSimilar (opts, cb) {
+  artistSimilar (opts, cb) {
     if (!opts.artist) {
       return cb(new Error('Missing required param: artist'))
     }
@@ -166,7 +166,7 @@ class LastFM {
     this._sendRequest(opts, 'similarartists', cb)
   }
 
-  artistGetTopAlbums (opts, cb) {
+  artistTopAlbums (opts, cb) {
     if (!opts.artist) {
       return cb(new Error('Missing required param: artist'))
     }
@@ -177,7 +177,7 @@ class LastFM {
     this._sendRequest(opts, 'topalbums', cb)
   }
 
-  artistGetTopTags (opts, cb) {
+  artistTopTags (opts, cb) {
     if (!opts.artist) {
       return cb(new Error('Missing required param: artist'))
     }
@@ -188,7 +188,7 @@ class LastFM {
     this._sendRequest(opts, 'toptags', cb)
   }
 
-  artistGetTopTracks (opts, cb) {
+  artistTopTracks (opts, cb) {
     if (!opts.artist) {
       return cb(new Error('Missing required param: artist'))
     }
@@ -225,7 +225,7 @@ class LastFM {
    * CHART API
    */
 
-  chartGetTopArtists (opts, cb) {
+  chartTopArtists (opts, cb) {
     Object.assign(opts, {
       method: 'chart.getTopArtists',
       autocorrect: 1
@@ -233,7 +233,7 @@ class LastFM {
     this._sendRequest(opts, 'artists', cb)
   }
 
-  chartGetTopTags (opts, cb) {
+  chartTopTags (opts, cb) {
     Object.assign(opts, {
       method: 'chart.getTopTags',
       autocorrect: 1
@@ -241,7 +241,7 @@ class LastFM {
     this._sendRequest(opts, 'tags', cb)
   }
 
-  chartGetTopTracks (opts, cb) {
+  chartTopTracks (opts, cb) {
     Object.assign(opts, {
       method: 'chart.getTopTracks',
       autocorrect: 1
@@ -253,7 +253,7 @@ class LastFM {
    * GEO API
    */
 
-  geoGetTopArtists (opts, cb) {
+  geoTopArtists (opts, cb) {
     if (!opts.country) {
       return cb(new Error('Missing required param: country'))
     }
@@ -264,7 +264,7 @@ class LastFM {
     this._sendRequest(opts, 'topartists', cb)
   }
 
-  geoGetTopTracks (opts, cb) {
+  geoTopTracks (opts, cb) {
     if (!opts.country) {
       return cb(new Error('Missing required param: country'))
     }
@@ -279,7 +279,7 @@ class LastFM {
    * TAG API
    */
 
-  tagGetInfo (opts, cb) {
+  tagInfo (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
@@ -287,7 +287,7 @@ class LastFM {
     this._sendRequest(opts, 'tag', cb)
   }
 
-  tagGetSimilar (opts, cb) {
+  tagSimilar (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
@@ -295,7 +295,7 @@ class LastFM {
     this._sendRequest(opts, 'similartags', cb)
   }
 
-  tagGetTopAlbums (opts, cb) {
+  tagTopAlbums (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
@@ -303,7 +303,7 @@ class LastFM {
     this._sendRequest(opts, 'albums', cb)
   }
 
-  tagGetTopArtists (opts, cb) {
+  tagTopArtists (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
@@ -311,12 +311,12 @@ class LastFM {
     this._sendRequest(opts, 'topartists', cb)
   }
 
-  tagGetTopTags (opts, cb) {
+  tagTopTags (opts, cb) {
     opts.method = 'tag.getTopTags'
     this._sendRequest(opts, 'toptags', cb)
   }
 
-  tagGetTopTracks (opts, cb) {
+  tagTopTracks (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
@@ -324,7 +324,7 @@ class LastFM {
     this._sendRequest(opts, 'tracks', cb)
   }
 
-  tagGetWeeklyChartList (opts, cb) {
+  tagWeeklyChartList (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
@@ -336,7 +336,7 @@ class LastFM {
    * TRACK API
    */
 
-  trackGetCorrection (opts, cb) {
+  trackCorrection (opts, cb) {
     if (!opts.artist || !opts.track) {
       return cb(new Error('Missing required params: artist, track'))
     }
@@ -344,7 +344,7 @@ class LastFM {
     this._sendRequest(opts, 'corrections', cb)
   }
 
-  trackGetInfo (opts, cb) {
+  trackInfo (opts, cb) {
     if (!opts.artist || !opts.track) {
       return cb(new Error('Missing required params: artist, track'))
     }
@@ -355,7 +355,7 @@ class LastFM {
     this._sendRequest(opts, 'track', cb)
   }
 
-  trackGetSimilar (opts, cb) {
+  trackSimilar (opts, cb) {
     if (!opts.artist || !opts.track) {
       return cb(new Error('Missing required params: artist, track'))
     }
@@ -366,7 +366,7 @@ class LastFM {
     this._sendRequest(opts, 'similartracks', cb)
   }
 
-  trackGetTopTags (opts, cb) {
+  trackTopTags (opts, cb) {
     if (!opts.artist || !opts.track) {
       return cb(new Error('Missing required params: artist, track'))
     }

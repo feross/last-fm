@@ -75,13 +75,13 @@ is used.
 
 ## Album API
 
-### `lastfm.albumGetInfo(opts, (err, data) => {})`
+### `lastfm.albumInfo(opts, (err, data) => {})`
 
 Get the metadata and tracklist for an album on Last.fm using the album name.
 
 - [album.getInfo](http://www.last.fm/api/show/album.getInfo)
 
-### `lastfm.albumGetTopTags(opts, (err, data) => {})`
+### `lastfm.albumTopTags(opts, (err, data) => {})`
 
 Get the top tags for an album on Last.fm, ordered by popularity.
 
@@ -95,37 +95,37 @@ Search for an album by name. Returns album matches sorted by relevance.
 
 ## Artist API
 
-### `lastfm.artistGetCorrection(opts, (err, data) => {})`
+### `lastfm.artistCorrection(opts, (err, data) => {})`
 
 Use the last.fm corrections data to check whether the supplied artist has a correction to a canonical artist
 
 - [artist.getCorrection](http://www.last.fm/api/show/artist.getCorrection)
 
-### `lastfm.artistGetInfo(opts, (err, data) => {})`
+### `lastfm.artistInfo(opts, (err, data) => {})`
 
 Get the metadata for an artist. Includes biography, truncated at 300 characters.
 
 - [artist.getInfo](http://www.last.fm/api/show/artist.getInfo)
 
-### `lastfm.artistGetSimilar(opts, (err, data) => {})`
+### `lastfm.artistSimilar(opts, (err, data) => {})`
 
 Get all the artists similar to this artist
 
 - [artist.getSimilar](http://www.last.fm/api/show/artist.getSimilar)
 
-### `lastfm.artistGetTopAlbums(opts, (err, data) => {})`
+### `lastfm.artistTopAlbums(opts, (err, data) => {})`
 
 Get the top albums for an artist on Last.fm, ordered by popularity.
 
 - [artist.getTopAlbums](http://www.last.fm/api/show/artist.getTopAlbums)
 
-### `lastfm.artistGetTopTags(opts, (err, data) => {})`
+### `lastfm.artistTopTags(opts, (err, data) => {})`
 
 Get the top tags for an artist on Last.fm, ordered by popularity.
 
 - [artist.getTopTags](http://www.last.fm/api/show/artist.getTopTags)
 
-### `lastfm.artistGetTopTracks(opts, (err, data) => {})`
+### `lastfm.artistTopTracks(opts, (err, data) => {})`
 
 Get the top tracks by an artist on Last.fm, ordered by popularity
 
@@ -139,19 +139,19 @@ Search for an artist by name. Returns artist matches sorted by relevance.
 
 ## Chart API
 
-### `lastfm.chartGetTopArtists(opts, (err, data) => {})`
+### `lastfm.chartTopArtists(opts, (err, data) => {})`
 
 Get the top artists chart
 
 - [chart.getTopArtists](http://www.last.fm/api/show/chart.getTopArtists)
 
-### `lastfm.chartGetTopTags(opts, (err, data) => {})`
+### `lastfm.chartTopTags(opts, (err, data) => {})`
 
 Get the top tags chart
 
 - [chart.getTopTags](http://www.last.fm/api/show/chart.getTopTags)
 
-### `lastfm.chartGetTopTracks(opts, (err, data) => {})`
+### `lastfm.chartTopTracks(opts, (err, data) => {})`
 
 Get the top tracks chart
 
@@ -161,13 +161,13 @@ Get the top tracks chart
 
 - [chart.getTopTracks](http://www.last.fm/api/show/chart.getTopTracks)
 
-### `lastfm.geoGetTopArtists(opts, (err, data) => {})`
+### `lastfm.geoTopArtists(opts, (err, data) => {})`
 
 Get the most popular artists on Last.fm by country
 
 - [geo.getTopArtists](http://www.last.fm/api/show/geo.getTopArtists)
 
-### `lastfm.geoGetTopTracks(opts, (err, data) => {})`
+### `lastfm.geoTopTracks(opts, (err, data) => {})`
 
 Get the most popular tracks on Last.fm last week by country
 
@@ -175,37 +175,37 @@ Get the most popular tracks on Last.fm last week by country
 
 ## Tag API
 
-### `lastfm.tagGetInfo(opts, (err, data) => {})`
+### `lastfm.tagInfo(opts, (err, data) => {})`
 
 Get the metadata for a tag
 
 - [tag.getInfo](http://www.last.fm/api/show/tag.getInfo)
 
-### `lastfm.tagGetSimilar(opts, (err, data) => {})`
+### `lastfm.tagSimilar(opts, (err, data) => {})`
 
 Search for tags similar to this one. Returns tags ranked by similarity, based on listening data.
 
 - [tag.getSimilar](http://www.last.fm/api/show/tag.getSimilar)
 
-### `lastfm.tagGetTopAlbums(opts, (err, data) => {})`
+### `lastfm.tagTopAlbums(opts, (err, data) => {})`
 
 Get the top albums tagged by this tag, ordered by tag count.
 
 - [tag.getTopAlbums](http://www.last.fm/api/show/tag.getTopAlbums)
 
-### `lastfm.tagGetTopArtists(opts, (err, data) => {})`
+### `lastfm.tagTopArtists(opts, (err, data) => {})`
 
 Get the top artists tagged by this tag, ordered by tag count.
 
 - [tag.getTopArtists](http://www.last.fm/api/show/tag.getTopArtists)
 
-### `lastfm.tagGetTopTags(opts, (err, data) => {})`
+### `lastfm.tagTopTags(opts, (err, data) => {})`
 
 Fetches the top global tags on Last.fm, sorted by popularity (number of times used)
 
 - [tag.getTopTags](http://www.last.fm/api/show/tag.getTopTags)
 
-### `lastfm.tagGetTopTracks(opts, (err, data) => {})`
+### `lastfm.tagTopTracks(opts, (err, data) => {})`
 
 Get the top tracks tagged by this tag, ordered by tag count.
 
@@ -213,31 +213,31 @@ Get the top tracks tagged by this tag, ordered by tag count.
 
 ## Track API
 
-### `lastfm.tagGetWeeklyChartList(opts, (err, data) => {})`
+### `lastfm.tagWeeklyChartList(opts, (err, data) => {})`
 
 Get a list of available charts for this tag, expressed as date ranges which can be sent to the chart services.
 
 - [tag.getWeeklyChartList](http://www.last.fm/api/show/tag.getWeeklyChartList)
 
-### `lastfm.trackGetCorrection(opts, (err, data) => {})`
+### `lastfm.trackCorrection(opts, (err, data) => {})`
 
 Use the last.fm corrections data to check whether the supplied track has a correction to a canonical track
 
 - [track.getCorrection](http://www.last.fm/api/show/track.getCorrection)
 
-### `lastfm.trackGetInfo(opts, (err, data) => {})`
+### `lastfm.trackInfo(opts, (err, data) => {})`
 
 Get the metadata for a track on Last.fm using the artist/track name.
 
 - [track.getInfo](http://www.last.fm/api/show/track.getInfo)
 
-### `lastfm.trackGetSimilar(opts, (err, data) => {})`
+### `lastfm.trackSimilar(opts, (err, data) => {})`
 
 Get the similar tracks for this track on Last.fm, based on listening data.
 
 - [track.getSimilar](http://www.last.fm/api/show/track.getSimilar)
 
-### `lastfm.trackGetTopTags(opts, (err, data) => {})`
+### `lastfm.trackTopTags(opts, (err, data) => {})`
 
 Get the top tags for this track on Last.fm, ordered by tag count. Supply a track & artist name.
 
