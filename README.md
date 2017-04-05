@@ -213,8 +213,6 @@ Get the top tracks tagged by this tag, ordered by tag count.
 
 ## Track API
 
-- [tag.getTopTracks](http://www.last.fm/api/show/tag.getTopTracks)
-
 ### `lastfm.tagGetWeeklyChartList(opts, (err, data) => {})`
 
 Get a list of available charts for this tag, expressed as date ranges which can be sent to the chart services.
