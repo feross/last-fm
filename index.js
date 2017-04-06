@@ -30,6 +30,7 @@ class LastFM {
 
     function onResponse (err, res, data) {
       if (err) return cb(err)
+      if (data.error) return cb(new Error(data.message))
       cb(null, data[name])
     }
   }
