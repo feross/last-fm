@@ -39,7 +39,7 @@ class LastFM {
     return image.map(i => i['#text']).filter(i => i.length > 0)
   }
 
-  _parsePage (data) {
+  _parseMeta (data) {
     const perPage = Number(data['opensearch:itemsPerPage'])
     const total = Number(data['opensearch:totalResults'])
     const page = (data['opensearch:startIndex'] / perPage) + 1
@@ -140,7 +140,7 @@ class LastFM {
           type: 'album'
         }
       })
-      cb(null, { result, meta: this._parsePage(data) })
+      cb(null, { result, meta: this._parseMeta(data) })
     })
   }
 
@@ -228,7 +228,7 @@ class LastFM {
           type: 'artist'
         }
       })
-      cb(null, { result, meta: this._parsePage(data) })
+      cb(null, { result, meta: this._parseMeta(data) })
     })
   }
 
@@ -406,7 +406,7 @@ class LastFM {
           type: 'track'
         }
       })
-      cb(null, { result, meta: this._parsePage(data) })
+      cb(null, { result, meta: this._parseMeta(data) })
     })
   }
 }
