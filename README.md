@@ -64,7 +64,7 @@ and process it into a more useful form.
 
 ### `lastfm.search(opts, (err, data) => {})`
 
-Search for artists, tracks, or albums by name.
+Search for artists, tracks, or albums by name. ([album.search](http://www.last.fm/api/show/album.search), [artist.search](http://www.last.fm/api/show/artist.search), [track.search](http://www.last.fm/api/show/track.search))
 
 This returns the "top result" across all result types, prioritizing an exact query
 match, if one exists. Otherwise, the most popular result by number of "listeners"
@@ -77,177 +77,121 @@ is used.
 
 ### `lastfm.albumInfo(opts, (err, data) => {})`
 
-Get the metadata and tracklist for an album on Last.fm using the album name.
-
-- [album.getInfo](http://www.last.fm/api/show/album.getInfo)
+Get the metadata and tracklist for an album on Last.fm using the album name. ([album.getInfo](http://www.last.fm/api/show/album.getInfo))
 
 ### `lastfm.albumTopTags(opts, (err, data) => {})`
 
-Get the top tags for an album on Last.fm, ordered by popularity.
-
-- [album.getTopTags](http://www.last.fm/api/show/album.getTopTags)
+Get the top tags for an album on Last.fm, ordered by popularity. ([album.getTopTags](http://www.last.fm/api/show/album.getTopTags))
 
 ### `lastfm.albumSearch(opts, (err, data) => {})`
 
-Search for an album by name. Returns album matches sorted by relevance.
-
-- [album.search](http://www.last.fm/api/show/album.search)
+Search for an album by name. Returns album matches sorted by relevance. ([album.search](http://www.last.fm/api/show/album.search))
 
 ## Artist API
 
 ### `lastfm.artistCorrection(opts, (err, data) => {})`
 
-Use the last.fm corrections data to check whether the supplied artist has a correction to a canonical artist
-
-- [artist.getCorrection](http://www.last.fm/api/show/artist.getCorrection)
+Use the last.fm corrections data to check whether the supplied artist has a correction to a canonical artist. ([artist.getCorrection](http://www.last.fm/api/show/artist.getCorrection))
 
 ### `lastfm.artistInfo(opts, (err, data) => {})`
 
-Get the metadata for an artist. Includes biography, truncated at 300 characters.
-
-- [artist.getInfo](http://www.last.fm/api/show/artist.getInfo)
+Get the metadata for an artist. Includes biography, truncated at 300 characters. ([artist.getInfo](http://www.last.fm/api/show/artist.getInfo))
 
 ### `lastfm.artistSimilar(opts, (err, data) => {})`
 
-Get all the artists similar to this artist
-
-- [artist.getSimilar](http://www.last.fm/api/show/artist.getSimilar)
+Get all the artists similar to this artist ([artist.getSimilar](http://www.last.fm/api/show/artist.getSimilar))
 
 ### `lastfm.artistTopAlbums(opts, (err, data) => {})`
 
-Get the top albums for an artist on Last.fm, ordered by popularity.
-
-- [artist.getTopAlbums](http://www.last.fm/api/show/artist.getTopAlbums)
+Get the top albums for an artist on Last.fm, ordered by popularity. ([artist.getTopAlbums](http://www.last.fm/api/show/artist.getTopAlbums))
 
 ### `lastfm.artistTopTags(opts, (err, data) => {})`
 
-Get the top tags for an artist on Last.fm, ordered by popularity.
-
-- [artist.getTopTags](http://www.last.fm/api/show/artist.getTopTags)
+Get the top tags for an artist on Last.fm, ordered by popularity. ([artist.getTopTags](http://www.last.fm/api/show/artist.getTopTags))
 
 ### `lastfm.artistTopTracks(opts, (err, data) => {})`
 
-Get the top tracks by an artist on Last.fm, ordered by popularity
-
-- [artist.getTopTracks](http://www.last.fm/api/show/artist.getTopTracks)
+Get the top tracks by an artist on Last.fm, ordered by popularity. ([artist.getTopTracks](http://www.last.fm/api/show/artist.getTopTracks))
 
 ### `lastfm.artistSearch(opts, (err, data) => {})`
 
-Search for an artist by name. Returns artist matches sorted by relevance.
-
-- [artist.search](http://www.last.fm/api/show/artist.search)
+Search for an artist by name. Returns artist matches sorted by relevance. ([artist.search](http://www.last.fm/api/show/artist.search))
 
 ## Chart API
 
 ### `lastfm.chartTopArtists(opts, (err, data) => {})`
 
-Get the top artists chart
-
-- [chart.getTopArtists](http://www.last.fm/api/show/chart.getTopArtists)
+Get the top artists chart. ([chart.getTopArtists](http://www.last.fm/api/show/chart.getTopArtists))
 
 ### `lastfm.chartTopTags(opts, (err, data) => {})`
 
-Get the top tags chart
-
-- [chart.getTopTags](http://www.last.fm/api/show/chart.getTopTags)
+Get the top tags chart. ([chart.getTopTags](http://www.last.fm/api/show/chart.getTopTags))
 
 ### `lastfm.chartTopTracks(opts, (err, data) => {})`
 
-Get the top tracks chart
-
-- [chart.getTopTracks](http://www.last.fm/api/show/chart.getTopTracks)
+Get the top tracks chart. ([chart.getTopTracks](http://www.last.fm/api/show/chart.getTopTracks))
 
 ## Geo API
 
-- [chart.getTopTracks](http://www.last.fm/api/show/chart.getTopTracks)
-
 ### `lastfm.geoTopArtists(opts, (err, data) => {})`
 
-Get the most popular artists on Last.fm by country
-
-- [geo.getTopArtists](http://www.last.fm/api/show/geo.getTopArtists)
+Get the most popular artists on Last.fm by country. ([geo.getTopArtists](http://www.last.fm/api/show/geo.getTopArtists))
 
 ### `lastfm.geoTopTracks(opts, (err, data) => {})`
 
-Get the most popular tracks on Last.fm last week by country
-
-- [geo.getTopTracks](http://www.last.fm/api/show/geo.getTopTracks)
+Get the most popular tracks on Last.fm last week by country. ([geo.getTopTracks](http://www.last.fm/api/show/geo.getTopTracks))
 
 ## Tag API
 
 ### `lastfm.tagInfo(opts, (err, data) => {})`
 
-Get the metadata for a tag
-
-- [tag.getInfo](http://www.last.fm/api/show/tag.getInfo)
+Get the metadata for a tag. ([tag.getInfo](http://www.last.fm/api/show/tag.getInfo))
 
 ### `lastfm.tagSimilar(opts, (err, data) => {})`
 
-Search for tags similar to this one. Returns tags ranked by similarity, based on listening data.
-
-- [tag.getSimilar](http://www.last.fm/api/show/tag.getSimilar)
+Search for tags similar to this one. Returns tags ranked by similarity, based on listening data. ([tag.getSimilar](http://www.last.fm/api/show/tag.getSimilar))
 
 ### `lastfm.tagTopAlbums(opts, (err, data) => {})`
 
-Get the top albums tagged by this tag, ordered by tag count.
-
-- [tag.getTopAlbums](http://www.last.fm/api/show/tag.getTopAlbums)
+Get the top albums tagged by this tag, ordered by tag count. ([tag.getTopAlbums](http://www.last.fm/api/show/tag.getTopAlbums))
 
 ### `lastfm.tagTopArtists(opts, (err, data) => {})`
 
-Get the top artists tagged by this tag, ordered by tag count.
-
-- [tag.getTopArtists](http://www.last.fm/api/show/tag.getTopArtists)
+Get the top artists tagged by this tag, ordered by tag count. ([tag.getTopArtists](http://www.last.fm/api/show/tag.getTopArtists))
 
 ### `lastfm.tagTopTags(opts, (err, data) => {})`
 
-Fetches the top global tags on Last.fm, sorted by popularity (number of times used)
-
-- [tag.getTopTags](http://www.last.fm/api/show/tag.getTopTags)
+Fetches the top global tags on Last.fm, sorted by popularity (number of times used). ([tag.getTopTags](http://www.last.fm/api/show/tag.getTopTags))
 
 ### `lastfm.tagTopTracks(opts, (err, data) => {})`
 
-Get the top tracks tagged by this tag, ordered by tag count.
-
-- [tag.getTopTracks](http://www.last.fm/api/show/tag.getTopTracks)
+Get the top tracks tagged by this tag, ordered by tag count. ([tag.getTopTracks](http://www.last.fm/api/show/tag.getTopTracks))
 
 ## Track API
 
 ### `lastfm.tagWeeklyChartList(opts, (err, data) => {})`
 
-Get a list of available charts for this tag, expressed as date ranges which can be sent to the chart services.
-
-- [tag.getWeeklyChartList](http://www.last.fm/api/show/tag.getWeeklyChartList)
+Get a list of available charts for this tag, expressed as date ranges which can be sent to the chart services. ([tag.getWeeklyChartList](http://www.last.fm/api/show/tag.getWeeklyChartList))
 
 ### `lastfm.trackCorrection(opts, (err, data) => {})`
 
-Use the last.fm corrections data to check whether the supplied track has a correction to a canonical track
-
-- [track.getCorrection](http://www.last.fm/api/show/track.getCorrection)
+Use the last.fm corrections data to check whether the supplied track has a correction to a canonical track. ([track.getCorrection](http://www.last.fm/api/show/track.getCorrection))
 
 ### `lastfm.trackInfo(opts, (err, data) => {})`
 
-Get the metadata for a track on Last.fm using the artist/track name.
-
-- [track.getInfo](http://www.last.fm/api/show/track.getInfo)
+Get the metadata for a track on Last.fm using the artist/track name. ([track.getInfo](http://www.last.fm/api/show/track.getInfo))
 
 ### `lastfm.trackSimilar(opts, (err, data) => {})`
 
-Get the similar tracks for this track on Last.fm, based on listening data.
-
-- [track.getSimilar](http://www.last.fm/api/show/track.getSimilar)
+Get the similar tracks for this track on Last.fm, based on listening data. ([track.getSimilar](http://www.last.fm/api/show/track.getSimilar))
 
 ### `lastfm.trackTopTags(opts, (err, data) => {})`
 
-Get the top tags for this track on Last.fm, ordered by tag count. Supply a track & artist name.
-
-- [track.getTopTags](http://www.last.fm/api/show/track.getTopTags)
+Get the top tags for this track on Last.fm, ordered by tag count. Supply a track & artist name. ([track.getTopTags](http://www.last.fm/api/show/track.getTopTags))
 
 ### `lastfm.trackSearch(opts, (err, data) => {})`
 
-Search for a track by track name. Returns track matches sorted by relevance.
-
-- [track.search](http://www.last.fm/api/show/track.search)
+Search for a track by track name. Returns track matches sorted by relevance. ([track.search](http://www.last.fm/api/show/track.search))
 
 ## License
 
