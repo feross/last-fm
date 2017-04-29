@@ -40,10 +40,15 @@ class LastFM {
   }
 
   _parsePage (data) {
+    const perPage = Number(data['opensearch:itemsPerPage'])
+    const total = Number(data['opensearch:totalResults'])
+    const page = (data['opensearch:startIndex'] / perPage) + 1
+    const totalPages = Math.ceil(total / perPage)
     return {
-      totalResults: data['opensearch:totalResults'],
-      startIndex: data['opensearch:startIndex'],
-      itemsPerPage: data['opensearch:itemsPerPage']
+      page: page,
+      perPage: perPage,
+      totalPages: totalPages,
+      total: total
     }
   }
 
@@ -55,7 +60,7 @@ class LastFM {
     if (!opts.q) {
       return cb(new Error('Missing required param: q'))
     }
-    const limit = opts.limit || 3
+    const limit = opts.limit || 10
     parallel({
       artists: (cb) => {
         this.artistSearch({ artist: opts.q, limit }, cb)
@@ -66,22 +71,28 @@ class LastFM {
       albums: (cb) => {
         this.albumSearch({ album: opts.q, limit }, cb)
       }
-    }, (err, results) => {
+    }, (err, r) => {
       if (err) return cb(err)
+
+      const result = {
+        artists: r.artists.result,
+        tracks: r.tracks.result,
+        albums: r.albums.result
+      }
+
+      // Prefer an exact match
       const exactMatch = []
-        .concat(results.artists.results, results.tracks.results, results.albums.results)
+        .concat(result.artists, result.tracks, result.albums)
         .filter(result => result.name.toLowerCase() === opts.q)[0]
 
+      // Otherwise, use most popular result by listener count. Albums don't have listener count.
       const top = []
-        .concat(results.artists.results, results.tracks.results)
+        .concat(result.artists, result.tracks)
         .sort((a, b) => b.listeners - a.listeners)[0]
 
-      if (exactMatch) {
-        results.top = exactMatch
-      } else {
-        results.top = top
-      }
-      cb(null, results)
+      result.top = exactMatch || top || null
+
+      cb(null, result)
     })
   }
 
@@ -121,7 +132,7 @@ class LastFM {
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
-      const results = data.albummatches.album.map((album) => {
+      const result = data.albummatches.album.map((album) => {
         return {
           name: album.name,
           artist: album.artist,
@@ -129,7 +140,7 @@ class LastFM {
           type: 'album'
         }
       })
-      cb(null, Object.assign(this._parsePage(data), { results }))
+      cb(null, { result, meta: this._parsePage(data) })
     })
   }
 
@@ -210,7 +221,7 @@ class LastFM {
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
-      const results = data.artistmatches.artist.map((artist) => {
+      const result = data.artistmatches.artist.map((artist) => {
         return {
           name: artist.name,
           listeners: Number(artist.listeners),
@@ -218,7 +229,7 @@ class LastFM {
           type: 'artist'
         }
       })
-      cb(null, Object.assign(this._parsePage(data), { results }))
+      cb(null, { result, meta: this._parsePage(data) })
     })
   }
 
@@ -388,7 +399,7 @@ class LastFM {
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
-      const results = data.trackmatches.track.map((track) => {
+      const result = data.trackmatches.track.map((track) => {
         return {
           name: track.name,
           artist: track.artist,
@@ -397,7 +408,7 @@ class LastFM {
           type: 'track'
         }
       })
-      cb(null, Object.assign(this._parsePage(data), { results }))
+      cb(null, { result, meta: this._parsePage(data) })
     })
   }
 }
