@@ -83,7 +83,8 @@ class LastFM {
       // Prefer an exact match
       const exactMatch = []
         .concat(result.artists, result.tracks, result.albums)
-        .filter(result => result.name.toLowerCase() === opts.q)[0]
+        .filter(result => result.name.toLowerCase() === opts.q)
+        .sort((a, b) => (b.listeners || 0) - (a.listeners || 0))[0]
 
       // Otherwise, use most popular result by listener count. Albums don't have listener count.
       const top = []
