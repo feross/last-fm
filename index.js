@@ -109,7 +109,27 @@ class LastFM {
       method: 'album.getInfo',
       autocorrect: 1
     })
-    this._sendRequest(opts, 'album', cb)
+    this._sendRequest(opts, 'album', (err, album) => {
+      if (err) return cb(err)
+      const tracks = album.tracks.track.map(track => {
+        return {
+          type: 'track',
+          name: track.name,
+          artist: track.artist.name,
+          duration: track.duration
+        }
+      })
+      cb(null, {
+        type: 'album',
+        name: album.name,
+        artist: album.artist,
+        images: this._parseImages(album.image),
+        listeners: Number(album.listeners),
+        tracks,
+        tags: this._parseTags(album.tags),
+        summary: this._parseSummary(album.wiki.content)
+      })
+    })
   }
 
   albumTopTags (opts, cb) {
