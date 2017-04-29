@@ -164,7 +164,25 @@ class LastFM {
       method: 'artist.getInfo',
       autocorrect: 1
     })
-    this._sendRequest(opts, 'artist', cb)
+    this._sendRequest(opts, 'artist', (err, artist) => {
+      if (err) return cb(err)
+      const similar = artist.similar.artist.map(similarArtist => {
+        return {
+          type: 'artist',
+          name: similarArtist.name,
+          images: this._parseImages(similarArtist.image)
+        }
+      })
+      cb(null, {
+        type: 'artist',
+        name: artist.name,
+        listeners: Number(artist.stats.listeners),
+        images: this._parseImages(artist.image),
+        tags: this._parseTags(artist.tags),
+        summary: this._parseSummary(artist.bio.content),
+        similar
+      })
+    })
   }
 
   artistSimilar (opts, cb) {
