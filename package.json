@@ -42,6 +42,6 @@
     "url": "git://github.com/feross/last-fm.git"
   },
   "scripts": {
-    "test": "standard"
+    "test": "standard && node -e \"require('./')\""
   }
 }
