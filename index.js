@@ -128,8 +128,7 @@ class LastFM {
       return cb(new Error('Missing required param: album'))
     }
     Object.assign(opts, {
-      method: 'album.search',
-      autocorrect: 1
+      method: 'album.search'
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
@@ -217,8 +216,7 @@ class LastFM {
       return cb(new Error('Missing required param: artist'))
     }
     Object.assign(opts, {
-      method: 'artist.search',
-      autocorrect: 1
+      method: 'artist.search'
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
@@ -395,8 +393,7 @@ class LastFM {
       return cb(new Error('Missing required param: track'))
     }
     Object.assign(opts, {
-      method: 'track.search',
-      autocorrect: 1
+      method: 'track.search'
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
