@@ -363,7 +363,19 @@ class LastFM {
       method: 'track.getInfo',
       autocorrect: 1
     })
-    this._sendRequest(opts, 'track', cb)
+    this._sendRequest(opts, 'track', (err, track) => {
+      if (err) return cb(err)
+      cb(null, {
+        type: 'track',
+        name: track.name,
+        artist: track.artist.name,
+        album: track.album.title,
+        listeners: Number(track.listeners),
+        duration: Math.ceil(track.duration / 1000),
+        images: this._parseImages(track.album.image),
+        tags: this._parseTags(track.toptags)
+      })
+    })
   }
 
   trackSimilar (opts, cb) {
