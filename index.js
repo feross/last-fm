@@ -153,7 +153,13 @@ class LastFM {
       return cb(new Error('Missing required param: artist'))
     }
     opts.method = 'artist.getCorrection'
-    this._sendRequest(opts, 'corrections', cb)
+    this._sendRequest(opts, 'corrections', (err, data) => {
+      if (err) return cb(err)
+      const correction = data.correction
+      cb(null, {
+        name: correction.artist.name
+      })
+    })
   }
 
   artistInfo (opts, cb) {
