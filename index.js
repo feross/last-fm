@@ -2,6 +2,15 @@ const get = require('simple-get')
 const querystring = require('querystring')
 const parallel = require('run-parallel')
 
+const IMAGE_WEIGHT = {
+  '': 1, // missing size is ranked last
+  small: 2,
+  medium: 3,
+  large: 4,
+  extralarge: 5,
+  mega: 6
+}
+
 class LastFM {
   constructor (key, userAgent) {
     if (!key) throw new Error('Missing required `key` argument')
@@ -35,8 +44,11 @@ class LastFM {
     }
   }
 
-  _parseImage (image) {
-    return image.map(i => i['#text']).filter(i => i.length > 0)
+  _parseImages (image) {
+    return image
+      .sort((a, b) => IMAGE_WEIGHT[b.size] - IMAGE_WEIGHT[a.size])
+      .map(i => i['#text'])
+      .filter(i => i.length > 0)
   }
 
   _parseMeta (data) {
@@ -50,6 +62,14 @@ class LastFM {
       totalPages: totalPages,
       total: total
     }
+  }
+
+  _parseTags (tags) {
+    return tags.tag.map(t => t.name)
+  }
+
+  _parseSummary (summary) {
+    return summary.replace(/\s+?<a .*?>Read more on Last\.fm<\/a>.*$/, '')
   }
 
   /**
@@ -154,10 +174,10 @@ class LastFM {
       if (err) return cb(err)
       const result = data.albummatches.album.map((album) => {
         return {
+          type: 'album',
           name: album.name,
           artist: album.artist,
-          images: this._parseImage(album.image),
-          type: 'album'
+          images: this._parseImages(album.image)
         }
       })
       cb(null, { result, meta: this._parseMeta(data) })
@@ -266,10 +286,10 @@ class LastFM {
       if (err) return cb(err)
       const result = data.artistmatches.artist.map((artist) => {
         return {
+          type: 'artist',
           name: artist.name,
           listeners: Number(artist.listeners),
-          images: this._parseImage(artist.image),
-          type: 'artist'
+          images: this._parseImages(artist.image)
         }
       })
       cb(null, { result, meta: this._parseMeta(data) })
@@ -462,11 +482,11 @@ class LastFM {
       if (err) return cb(err)
       const result = data.trackmatches.track.map((track) => {
         return {
+          type: 'track',
           name: track.name,
           artist: track.artist,
           listeners: Number(track.listeners),
-          images: this._parseImage(track.image),
-          type: 'track'
+          images: this._parseImages(track.image)
         }
       })
       cb(null, { result, meta: this._parseMeta(data) })
