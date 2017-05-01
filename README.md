@@ -169,10 +169,6 @@ Get the top tracks tagged by this tag, ordered by tag count. ([tag.getTopTracks]
 
 ## Track API
 
-### `lastfm.tagWeeklyChartList(opts, (err, data) => {})`
-
-Get a list of available charts for this tag, expressed as date ranges which can be sent to the chart services. ([tag.getWeeklyChartList](http://www.last.fm/api/show/tag.getWeeklyChartList))
-
 ### `lastfm.trackCorrection(opts, (err, data) => {})`
 
 Use the last.fm corrections data to check whether the supplied track has a correction to a canonical track. ([track.getCorrection](http://www.last.fm/api/show/track.getCorrection))

@@ -399,14 +399,6 @@ class LastFM {
     this._sendRequest(opts, 'tracks', cb)
   }
 
-  tagWeeklyChartList (opts, cb) {
-    if (!opts.tag) {
-      return cb(new Error('Missing required param: tag'))
-    }
-    opts.method = 'tag.getWeeklyChartList'
-    this._sendRequest(opts, 'weeklychartlist', cb)
-  }
-
   /**
    * TRACK API
    */
