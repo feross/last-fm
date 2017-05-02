@@ -44,6 +44,8 @@ class LastFM {
     }
   }
 
+  /* PARSE COMMON RESPONSE PROPERTIES */
+
   _parseImages (image) {
     return image
       .sort((a, b) => IMAGE_WEIGHT[a.size] - IMAGE_WEIGHT[b.size])
@@ -68,6 +70,12 @@ class LastFM {
     }
   }
 
+  _parseSummary (summary) {
+    return summary.replace(/\s+?<a .*?>Read more on Last\.fm<\/a>.*$/, '')
+  }
+
+  /* PARSE COMMON RESPONSE TYPES */
+
   _parseArtists (artists) {
     return artists.map((artist) => {
       return {
@@ -79,12 +87,32 @@ class LastFM {
     })
   }
 
+  _parseAlbums (albums) {
+    return albums.map((album) => {
+      return {
+        type: 'album',
+        name: album.name,
+        artist: album.artist.name || album.artist,
+        listeners: album.playcount && Number(album.playcount), // optional
+        images: this._parseImages(album.image)
+      }
+    })
+  }
+
   _parseTags (tags) {
     return tags.tag.map(t => t.name)
   }
 
-  _parseSummary (summary) {
-    return summary.replace(/\s+?<a .*?>Read more on Last\.fm<\/a>.*$/, '')
+  _parseTracks (tracks) {
+    return tracks.map((track) => {
+      return {
+        type: 'track',
+        name: track.name,
+        artist: track.artist.name || track.artist,
+        listeners: Number(track.playcount || track.listeners),
+        images: this._parseImages(track.image)
+      }
+    })
   }
 
   /**
@@ -187,15 +215,10 @@ class LastFM {
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
-      const result = data.albummatches.album.map((album) => {
-        return {
-          type: 'album',
-          name: album.name,
-          artist: album.artist,
-          images: this._parseImages(album.image)
-        }
+      cb(null, {
+        meta: this._parseMeta(data),
+        result: this._parseAlbums(data.albummatches.album)
       })
-      cb(null, { meta: this._parseMeta(data), result })
     })
   }
 
@@ -265,7 +288,13 @@ class LastFM {
       method: 'artist.getTopAlbums',
       autocorrect: 1
     })
-    this._sendRequest(opts, 'topalbums', cb)
+    this._sendRequest(opts, 'topalbums', (err, data) => {
+      if (err) return cb(err)
+      cb(null, {
+        meta: this._parseMeta(data),
+        result: this._parseAlbums(data.album)
+      })
+    })
   }
 
   artistTopTags (opts, cb) {
@@ -287,7 +316,13 @@ class LastFM {
       method: 'artist.getTopTracks',
       autocorrect: 1
     })
-    this._sendRequest(opts, 'toptracks', cb)
+    this._sendRequest(opts, 'toptracks', (err, data) => {
+      if (err) return cb(err)
+      cb(null, {
+        meta: this._parseMeta(data),
+        result: this._parseTracks(data.track)
+      })
+    })
   }
 
   artistSearch (opts, cb) {
@@ -489,16 +524,10 @@ class LastFM {
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
-      const result = data.trackmatches.track.map((track) => {
-        return {
-          type: 'track',
-          name: track.name,
-          artist: track.artist,
-          listeners: Number(track.listeners),
-          images: this._parseImages(track.image)
-        }
+      cb(null, {
+        meta: this._parseMeta(data),
+        result: this._parseTracks(data.trackmatches.track)
       })
-      cb(null, { meta: this._parseMeta(data), result })
     })
   }
 }
