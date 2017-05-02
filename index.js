@@ -52,16 +52,31 @@ class LastFM {
   }
 
   _parseMeta (data) {
-    const perPage = Number(data['opensearch:itemsPerPage'])
-    const total = Number(data['opensearch:totalResults'])
-    const page = (data['opensearch:startIndex'] / perPage) + 1
-    const totalPages = Math.ceil(total / perPage)
-    return {
-      page: page,
-      perPage: perPage,
-      totalPages: totalPages,
-      total: total
+    if (data['opensearch:totalResults']) {
+      const total = Number(data['opensearch:totalResults'])
+      const perPage = Number(data['opensearch:itemsPerPage'])
+      const page = (Number(data['opensearch:startIndex']) / perPage) + 1
+      const totalPages = Math.ceil(total / perPage)
+      return { page, perPage, total, totalPages }
+    } else {
+      return {
+        page: Number(data['@attr'].page),
+        perPage: Number(data['@attr'].perPage),
+        total: Number(data['@attr'].total),
+        totalPages: Number(data['@attr'].totalPages)
+      }
     }
+  }
+
+  _parseArtists (artists) {
+    return artists.map((artist) => {
+      return {
+        type: 'artist',
+        name: artist.name,
+        listeners: Number(artist.listeners),
+        images: this._parseImages(artist.image)
+      }
+    })
   }
 
   _parseTags (tags) {
@@ -180,7 +195,7 @@ class LastFM {
           images: this._parseImages(album.image)
         }
       })
-      cb(null, { result, meta: this._parseMeta(data) })
+      cb(null, { meta: this._parseMeta(data), result })
     })
   }
 
@@ -284,15 +299,10 @@ class LastFM {
     })
     this._sendRequest(opts, 'results', (err, data) => {
       if (err) return cb(err)
-      const result = data.artistmatches.artist.map((artist) => {
-        return {
-          type: 'artist',
-          name: artist.name,
-          listeners: Number(artist.listeners),
-          images: this._parseImages(artist.image)
-        }
+      cb(null, {
+        meta: this._parseMeta(data),
+        result: this._parseArtists(data.artistmatches.artist)
       })
-      cb(null, { result, meta: this._parseMeta(data) })
     })
   }
 
@@ -305,7 +315,14 @@ class LastFM {
       method: 'chart.getTopArtists',
       autocorrect: 1
     })
-    this._sendRequest(opts, 'artists', cb)
+    this._sendRequest(opts, 'artists', (err, data) => {
+      if (err) return cb(err)
+
+      cb(null, {
+        meta: this._parseMeta(data),
+        result: this._parseArtists(data.artist)
+      })
+    })
   }
 
   chartTopTags (opts, cb) {
@@ -481,7 +498,7 @@ class LastFM {
           images: this._parseImages(track.image)
         }
       })
-      cb(null, { result, meta: this._parseMeta(data) })
+      cb(null, { meta: this._parseMeta(data), result })
     })
   }
 }
