@@ -46,7 +46,7 @@ class LastFM {
 
   _parseImages (image) {
     return image
-      .sort((a, b) => IMAGE_WEIGHT[b.size] - IMAGE_WEIGHT[a.size])
+      .sort((a, b) => IMAGE_WEIGHT[a.size] - IMAGE_WEIGHT[b.size])
       .map(i => i['#text'])
       .filter(i => i.length > 0)
   }
