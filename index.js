@@ -44,13 +44,16 @@ class LastFM {
     }
   }
 
-  /* PARSE COMMON RESPONSE PROPERTIES */
+  /**
+   * PARSE COMMON RESPONSE PROPERTIES
+   */
 
   _parseImages (image) {
     return image
       .sort((a, b) => IMAGE_WEIGHT[a.size] - IMAGE_WEIGHT[b.size])
-      .map(i => i['#text'])
-      .filter(i => i.length > 0)
+      .filter(image => image.size !== '')
+      .map(image => image['#text'])
+      .filter(image => image.length > 0)
   }
 
   _parseMeta (data) {
