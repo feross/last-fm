@@ -56,15 +56,16 @@ class LastFM {
       .filter(image => image.length > 0)
   }
 
-  _parseMeta (data) {
+  _parseMeta (data, query) {
     if (data['opensearch:totalResults']) {
       const total = Number(data['opensearch:totalResults'])
       const perPage = Number(data['opensearch:itemsPerPage'])
       const page = (Number(data['opensearch:startIndex']) / perPage) + 1
       const totalPages = Math.ceil(total / perPage)
-      return { page, perPage, total, totalPages }
+      return { query, page, perPage, total, totalPages }
     } else {
       return {
+        query,
         page: Number(data['@attr'].page),
         perPage: Number(data['@attr'].perPage),
         total: Number(data['@attr'].total),
@@ -77,7 +78,9 @@ class LastFM {
     return summary.replace(/\s+?<a .*?>Read more on Last\.fm<\/a>.*$/, '')
   }
 
-  /* PARSE COMMON RESPONSE TYPES */
+  /**
+   * PARSE COMMON RESPONSE TYPES
+   */
 
   _parseArtists (artists) {
     return artists.map((artist) => {
@@ -95,7 +98,7 @@ class LastFM {
       return {
         type: 'album',
         name: album.name,
-        artist: album.artist.name || album.artist,
+        artistName: album.artist.name || album.artist,
         listeners: album.playcount && Number(album.playcount), // optional
         images: this._parseImages(album.image)
       }
@@ -108,12 +111,14 @@ class LastFM {
 
   _parseTracks (tracks) {
     return tracks.map((track) => {
+      const listeners = track.playcount || track.listeners
       return {
         type: 'track',
         name: track.name,
-        artist: track.artist.name || track.artist,
-        listeners: Number(track.playcount || track.listeners),
-        images: this._parseImages(track.image)
+        artistName: track.artist.name || track.artist,
+        duration: track.duration && Number(track.duration), // optional
+        listeners: listeners && Number(listeners), // optional
+        images: track.image && this._parseImages(track.image) // optional
       }
     })
   }
@@ -126,38 +131,47 @@ class LastFM {
     if (!opts.q) {
       return cb(new Error('Missing required param: q'))
     }
-    const limit = opts.limit || 10
     parallel({
       artists: (cb) => {
-        this.artistSearch({ artist: opts.q, limit }, cb)
+        this.artistSearch({ q: opts.q, limit: opts.artistsLimit || opts.limit }, cb)
       },
       tracks: (cb) => {
-        this.trackSearch({ track: opts.q, limit }, cb)
+        this.trackSearch({ q: opts.q, limit: opts.tracksLimit || opts.limit }, cb)
       },
       albums: (cb) => {
-        this.albumSearch({ album: opts.q, limit }, cb)
+        this.albumSearch({ q: opts.q, limit: opts.albumsLimit || opts.limit }, cb)
       }
     }, (err, r) => {
       if (err) return cb(err)
 
+      const page = r.artists.meta.page
+      const total = r.artists.meta.total + r.tracks.meta.total + r.albums.meta.total
+      const perPage = r.artists.meta.perPage * 3
+      const totalPages = Math.ceil(total / perPage)
+
       const result = {
-        artists: r.artists.result,
-        tracks: r.tracks.result,
-        albums: r.albums.result
+        meta: { query: opts, page, perPage, total, totalPages },
+        result: {
+          type: 'search',
+          q: opts.q,
+          artists: r.artists.result,
+          tracks: r.tracks.result,
+          albums: r.albums.result
+        }
       }
 
       // Prefer an exact match
       const exactMatch = []
-        .concat(result.artists, result.tracks, result.albums)
+        .concat(result.result.artists, result.result.tracks, result.result.albums)
         .filter(result => result.name.toLowerCase() === opts.q)
         .sort((a, b) => (b.listeners || 0) - (a.listeners || 0))[0]
 
       // Otherwise, use most popular result by listener count. Albums don't have listener count.
       const top = []
-        .concat(result.artists, result.tracks)
+        .concat(result.result.artists, result.result.tracks)
         .sort((a, b) => b.listeners - a.listeners)[0]
 
-      result.top = exactMatch || top || null
+      result.result.top = exactMatch || top || null
 
       cb(null, result)
     })
@@ -168,58 +182,56 @@ class LastFM {
    */
 
   albumInfo (opts, cb) {
-    if (!opts.artist || !opts.album) {
-      return cb(new Error('Missing required params: artist, album'))
+    if (!opts.name || !opts.artistName) {
+      return cb(new Error('Missing required params: name, artistName'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'album.getInfo',
+      album: opts.name,
+      artist: opts.artistName,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'album', (err, album) => {
+    }
+    this._sendRequest(params, 'album', (err, album) => {
       if (err) return cb(err)
-      const tracks = album.tracks.track.map(track => {
-        return {
-          type: 'track',
-          name: track.name,
-          artist: track.artist.name,
-          duration: track.duration
-        }
-      })
       cb(null, {
         type: 'album',
         name: album.name,
-        artist: album.artist,
+        artistName: album.artist,
         images: this._parseImages(album.image),
         listeners: Number(album.listeners),
-        tracks,
+        tracks: this._parseTracks(album.tracks.track),
         tags: this._parseTags(album.tags),
-        summary: this._parseSummary(album.wiki.content)
+        summary: album.wiki && this._parseSummary(album.wiki.content)
       })
     })
   }
 
   albumTopTags (opts, cb) {
-    if (!opts.artist || !opts.album) {
-      return cb(new Error('Missing required params: artist, album'))
+    if (!opts.name || !opts.artistName) {
+      return cb(new Error('Missing required params: name, artistName'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'album.getTopTags',
+      album: opts.name,
+      artist: opts.artistName,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'toptags', cb)
+    }
+    this._sendRequest(params, 'toptags', cb)
   }
 
   albumSearch (opts, cb) {
-    if (!opts.album) {
-      return cb(new Error('Missing required param: album'))
+    if (!opts.q) {
+      return cb(new Error('Missing required param: q'))
     }
-    Object.assign(opts, {
-      method: 'album.search'
-    })
-    this._sendRequest(opts, 'results', (err, data) => {
+    const params = {
+      method: 'album.search',
+      limit: opts.limit,
+      album: opts.q
+    }
+    this._sendRequest(params, 'results', (err, data) => {
       if (err) return cb(err)
       cb(null, {
-        meta: this._parseMeta(data),
+        meta: this._parseMeta(data, opts),
         result: this._parseAlbums(data.albummatches.album)
       })
     })
@@ -230,11 +242,14 @@ class LastFM {
    */
 
   artistCorrection (opts, cb) {
-    if (!opts.artist) {
-      return cb(new Error('Missing required param: artist'))
+    if (!opts.name) {
+      return cb(new Error('Missing required param: name'))
     }
-    opts.method = 'artist.getCorrection'
-    this._sendRequest(opts, 'corrections', (err, data) => {
+    const params = {
+      method: 'artist.getCorrection',
+      artist: opts.name
+    }
+    this._sendRequest(params, 'corrections', (err, data) => {
       if (err) return cb(err)
       const correction = data.correction
       cb(null, {
@@ -244,14 +259,15 @@ class LastFM {
   }
 
   artistInfo (opts, cb) {
-    if (!opts.artist) {
-      return cb(new Error('Missing required param: artist'))
+    if (!opts.name) {
+      return cb(new Error('Missing required param: name'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'artist.getInfo',
+      artist: opts.name,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'artist', (err, artist) => {
+    }
+    this._sendRequest(params, 'artist', (err, artist) => {
       if (err) return cb(err)
       const similar = artist.similar.artist.map(similarArtist => {
         return {
@@ -273,72 +289,81 @@ class LastFM {
   }
 
   artistSimilar (opts, cb) {
-    if (!opts.artist) {
-      return cb(new Error('Missing required param: artist'))
+    if (!opts.name) {
+      return cb(new Error('Missing required param: name'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'artist.getSimilar',
+      artist: opts.name,
+      limit: opts.limit,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'similarartists', cb)
+    }
+    this._sendRequest(params, 'similarartists', cb)
   }
 
   artistTopAlbums (opts, cb) {
-    if (!opts.artist) {
-      return cb(new Error('Missing required param: artist'))
+    if (!opts.name) {
+      return cb(new Error('Missing required param: name'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'artist.getTopAlbums',
+      artist: opts.name,
+      limit: opts.limit,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'topalbums', (err, data) => {
+    }
+    this._sendRequest(params, 'topalbums', (err, data) => {
       if (err) return cb(err)
       cb(null, {
-        meta: this._parseMeta(data),
+        meta: this._parseMeta(data, opts),
         result: this._parseAlbums(data.album)
       })
     })
   }
 
   artistTopTags (opts, cb) {
-    if (!opts.artist) {
-      return cb(new Error('Missing required param: artist'))
+    if (!opts.name) {
+      return cb(new Error('Missing required param: name'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'artist.getTopTags',
+      artist: opts.name,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'toptags', cb)
+    }
+    this._sendRequest(params, 'toptags', cb)
   }
 
   artistTopTracks (opts, cb) {
-    if (!opts.artist) {
-      return cb(new Error('Missing required param: artist'))
+    if (!opts.name) {
+      return cb(new Error('Missing required param: name'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'artist.getTopTracks',
+      artist: opts.name,
+      limit: opts.limit,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'toptracks', (err, data) => {
+    }
+    this._sendRequest(params, 'toptracks', (err, data) => {
       if (err) return cb(err)
       cb(null, {
-        meta: this._parseMeta(data),
+        meta: this._parseMeta(data, opts),
         result: this._parseTracks(data.track)
       })
     })
   }
 
   artistSearch (opts, cb) {
-    if (!opts.artist) {
-      return cb(new Error('Missing required param: artist'))
+    if (!opts.q) {
+      return cb(new Error('Missing required param: q'))
     }
-    Object.assign(opts, {
-      method: 'artist.search'
-    })
-    this._sendRequest(opts, 'results', (err, data) => {
+    const params = {
+      method: 'artist.search',
+      limit: opts.limit,
+      artist: opts.q
+    }
+    this._sendRequest(params, 'results', (err, data) => {
       if (err) return cb(err)
       cb(null, {
-        meta: this._parseMeta(data),
+        meta: this._parseMeta(data, opts),
         result: this._parseArtists(data.artistmatches.artist)
       })
     })
@@ -349,34 +374,42 @@ class LastFM {
    */
 
   chartTopArtists (opts, cb) {
-    Object.assign(opts, {
+    const params = {
       method: 'chart.getTopArtists',
+      limit: opts.limit,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'artists', (err, data) => {
+    }
+    this._sendRequest(params, 'artists', (err, data) => {
       if (err) return cb(err)
-
       cb(null, {
-        meta: this._parseMeta(data),
+        meta: this._parseMeta(data, opts),
         result: this._parseArtists(data.artist)
       })
     })
   }
 
   chartTopTags (opts, cb) {
-    Object.assign(opts, {
+    const params = {
       method: 'chart.getTopTags',
+      limit: opts.limit,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'tags', cb)
+    }
+    this._sendRequest(params, 'tags', cb)
   }
 
   chartTopTracks (opts, cb) {
-    Object.assign(opts, {
+    const params = {
       method: 'chart.getTopTracks',
+      limit: opts.limit,
       autocorrect: 1
+    }
+    this._sendRequest(params, 'tracks', (err, data) => {
+      if (err) return cb(err)
+      cb(null, {
+        meta: this._parseMeta(data, opts),
+        result: this._parseTracks(data.track)
+      })
     })
-    this._sendRequest(opts, 'tracks', cb)
   }
 
   /**
@@ -387,22 +420,26 @@ class LastFM {
     if (!opts.country) {
       return cb(new Error('Missing required param: country'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'geo.getTopArtists',
+      country: opts.country,
+      limit: opts.limit,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'topartists', cb)
+    }
+    this._sendRequest(params, 'topartists', cb)
   }
 
   geoTopTracks (opts, cb) {
     if (!opts.country) {
       return cb(new Error('Missing required param: country'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'geo.getTopTracks',
+      country: opts.country,
+      limit: opts.limit,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'tracks', cb)
+    }
+    this._sendRequest(params, 'tracks', cb)
   }
 
   /**
@@ -413,45 +450,65 @@ class LastFM {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
-    opts.method = 'tag.getInfo'
-    this._sendRequest(opts, 'tag', cb)
+    const params = {
+      method: 'tag.getInfo',
+      tag: opts.tag
+    }
+    this._sendRequest(params, 'tag', cb)
   }
 
   tagSimilar (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
-    opts.method = 'tag.getSimilar'
-    this._sendRequest(opts, 'similartags', cb)
+    const params = {
+      method: 'tag.getSimilar',
+      tag: opts.tag
+    }
+    this._sendRequest(params, 'similartags', cb)
   }
 
   tagTopAlbums (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
-    opts.method = 'tag.getTopAlbums'
-    this._sendRequest(opts, 'albums', cb)
+    const params = {
+      method: 'tag.getTopAlbums',
+      limit: opts.limit,
+      tag: opts.tag
+    }
+    this._sendRequest(params, 'albums', cb)
   }
 
   tagTopArtists (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
-    opts.method = 'tag.getTopArtists'
-    this._sendRequest(opts, 'topartists', cb)
+    const params = {
+      method: 'tag.getTopArtists',
+      limit: opts.limit,
+      tag: opts.tag
+    }
+    this._sendRequest(params, 'topartists', cb)
   }
 
   tagTopTags (opts, cb) {
-    opts.method = 'tag.getTopTags'
-    this._sendRequest(opts, 'toptags', cb)
+    const params = {
+      method: 'tag.getTopTags'
+    }
+    this._sendRequest(params, 'toptags', cb)
   }
 
   tagTopTracks (opts, cb) {
     if (!opts.tag) {
       return cb(new Error('Missing required param: tag'))
     }
-    opts.method = 'tag.getTopTracks'
-    this._sendRequest(opts, 'tracks', cb)
+    const params = {
+      method: 'tag.getTopTracks',
+      limit: opts.limit,
+      tag: opts.tag
+    }
+    this._sendRequest(params, 'tracks', cb)
   }
 
   /**
@@ -459,34 +516,39 @@ class LastFM {
    */
 
   trackCorrection (opts, cb) {
-    if (!opts.artist || !opts.track) {
-      return cb(new Error('Missing required params: artist, track'))
+    if (!opts.name || !opts.artistName) {
+      return cb(new Error('Missing required params: name, artistName'))
     }
-    opts.method = 'track.getCorrection'
-    this._sendRequest(opts, 'corrections', (err, data) => {
+    const params = {
+      method: 'track.getCorrection',
+      track: opts.name,
+      artist: opts.artistName
+    }
+    this._sendRequest(params, 'corrections', (err, data) => {
       if (err) return cb(err)
-      const correction = data.correction
       cb(null, {
-        name: correction.track.name,
-        artist: correction.track.artist.name
+        name: data.correction.track.name,
+        artistName: data.correction.track.artist.name
       })
     })
   }
 
   trackInfo (opts, cb) {
-    if (!opts.artist || !opts.track) {
-      return cb(new Error('Missing required params: artist, track'))
+    if (!opts.name || !opts.artistName) {
+      return cb(new Error('Missing required params: name, artistName'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'track.getInfo',
+      track: opts.name,
+      artist: opts.artistName,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'track', (err, track) => {
+    }
+    this._sendRequest(params, 'track', (err, track) => {
       if (err) return cb(err)
       cb(null, {
         type: 'track',
         name: track.name,
-        artist: track.artist.name,
+        artistName: track.artist.name,
         album: track.album.title,
         listeners: Number(track.listeners),
         duration: Math.ceil(track.duration / 1000),
@@ -497,38 +559,45 @@ class LastFM {
   }
 
   trackSimilar (opts, cb) {
-    if (!opts.artist || !opts.track) {
-      return cb(new Error('Missing required params: artist, track'))
+    if (!opts.name || !opts.artistName) {
+      return cb(new Error('Missing required params: name, artistName'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'track.getSimilar',
+      track: opts.name,
+      artist: opts.artistName,
+      limit: opts.limit,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'similartracks', cb)
+    }
+    this._sendRequest(params, 'similartracks', cb)
   }
 
   trackTopTags (opts, cb) {
-    if (!opts.artist || !opts.track) {
-      return cb(new Error('Missing required params: artist, track'))
+    if (!opts.name || !opts.artistName) {
+      return cb(new Error('Missing required params: name, artistName'))
     }
-    Object.assign(opts, {
+    const params = {
       method: 'track.getTopTags',
+      track: opts.name,
+      artist: opts.artistName,
       autocorrect: 1
-    })
-    this._sendRequest(opts, 'toptags', cb)
+    }
+    this._sendRequest(params, 'toptags', cb)
   }
 
   trackSearch (opts, cb) {
-    if (!opts.track) {
-      return cb(new Error('Missing required param: track'))
+    if (!opts.q) {
+      return cb(new Error('Missing required param: q'))
     }
-    Object.assign(opts, {
-      method: 'track.search'
-    })
-    this._sendRequest(opts, 'results', (err, data) => {
+    const params = {
+      method: 'track.search',
+      limit: opts.limit,
+      track: opts.q
+    }
+    this._sendRequest(params, 'results', (err, data) => {
       if (err) return cb(err)
       cb(null, {
-        meta: this._parseMeta(data),
+        meta: this._parseMeta(data, opts),
         result: this._parseTracks(data.trackmatches.track)
       })
     })
