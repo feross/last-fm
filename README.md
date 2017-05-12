@@ -38,7 +38,7 @@ First, [get an API key](https://www.last.fm/api/account/create) from Last.fm.
 
 ```js
 const LastFM = require('last-fm')
-const lastfm = new LastFM('API_KEY', 'MyApp/1.0.0 (http://example.com)')
+const lastfm = new LastFM('API_KEY', { userAgent: 'MyApp/1.0.0 (http://example.com)' })
 
 lastfm.trackSearch({ track: 'the greatest' }, (err, data) => {
   if (err) console.error(err)
@@ -58,6 +58,12 @@ key is not required.
 If `opts` is provided, it can contain the following options:
 
 - `opts.userAgent` - String to use as the `User-Agent` header in http requests
+- `opts.minArtistListeners` - Exclude artist results with fewer than this number of "listeners" (default: `0`)
+- `opts.minTrackListeners` - Exclude track results with fewer than this number of "listeners" (default: `0`)
+
+Note: Unfortunately, there is no `opts.minAlbumListeners` since the Last.fm API does not
+include listener numbers in album results (even though the data exists when you get an
+individual album via `lastfm.albumInfo`)
 
 ## Convenience API
 

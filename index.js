@@ -16,6 +16,8 @@ class LastFM {
     if (!key) throw new Error('Missing required `key` argument')
     this._key = key
     this._userAgent = opts.userAgent || 'last-fm (https://github.com/feross/last-fm)'
+    this._minArtistListeners = opts.minArtistListeners || 0
+    this._minTrackListeners = opts.minTrackListeners || 0
   }
 
   _sendRequest (params, name, cb) {
@@ -83,26 +85,32 @@ class LastFM {
    */
 
   _parseArtists (artists) {
-    return artists.map((artist) => {
-      return {
-        type: 'artist',
-        name: artist.name,
-        listeners: Number(artist.listeners),
-        images: this._parseImages(artist.image)
-      }
-    })
+    return artists
+      .map(artist => {
+        return {
+          type: 'artist',
+          name: artist.name,
+          listeners: Number(artist.listeners),
+          images: this._parseImages(artist.image)
+        }
+      })
+      .filter(artist => artist.listeners == null || artist.listeners >= this._minArtistListeners)
   }
 
   _parseAlbums (albums) {
-    return albums.map((album) => {
-      return {
-        type: 'album',
-        name: album.name,
-        artistName: album.artist.name || album.artist,
-        listeners: album.playcount && Number(album.playcount), // optional
-        images: this._parseImages(album.image)
-      }
-    })
+    return albums
+      .map(album => {
+        return {
+          type: 'album',
+          name: album.name,
+          artistName: album.artist.name || album.artist,
+          listeners: (
+            album.playcount && Number(album.playcount) ||
+            album.listeners && Number(album.listeners)
+          ), // optional
+          images: this._parseImages(album.image)
+        }
+      })
   }
 
   _parseTags (tags) {
@@ -110,17 +118,19 @@ class LastFM {
   }
 
   _parseTracks (tracks) {
-    return tracks.map((track) => {
-      const listeners = track.playcount || track.listeners
-      return {
-        type: 'track',
-        name: track.name,
-        artistName: track.artist.name || track.artist,
-        duration: track.duration && Number(track.duration), // optional
-        listeners: listeners && Number(listeners), // optional
-        images: track.image && this._parseImages(track.image) // optional
-      }
-    })
+    return tracks
+      .map(track => {
+        const listeners = track.playcount || track.listeners
+        return {
+          type: 'track',
+          name: track.name,
+          artistName: track.artist.name || track.artist,
+          duration: track.duration && Number(track.duration), // optional
+          listeners: listeners && Number(listeners), // optional
+          images: track.image && this._parseImages(track.image) // optional
+        }
+      })
+      .filter(track => track.listeners == null || track.listeners >= this._minTrackListeners)
   }
 
   /**
@@ -132,13 +142,13 @@ class LastFM {
       return cb(new Error('Missing required param: q'))
     }
     parallel({
-      artists: (cb) => {
+      artists: cb => {
         this.artistSearch({ q: opts.q, limit: opts.artistsLimit || opts.limit }, cb)
       },
-      tracks: (cb) => {
+      tracks: cb => {
         this.trackSearch({ q: opts.q, limit: opts.tracksLimit || opts.limit }, cb)
       },
-      albums: (cb) => {
+      albums: cb => {
         this.albumSearch({ q: opts.q, limit: opts.albumsLimit || opts.limit }, cb)
       }
     }, (err, r) => {
@@ -198,7 +208,7 @@ class LastFM {
         name: album.name,
         artistName: album.artist,
         images: this._parseImages(album.image),
-        listeners: Number(album.listeners),
+        listeners: Number(album.playcount) || Number(album.listeners),
         tracks: this._parseTracks(album.tracks.track),
         tags: this._parseTags(album.tags),
         summary: album.wiki && this._parseSummary(album.wiki.content)
