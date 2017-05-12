@@ -48,14 +48,16 @@ lastfm.trackSearch({ track: 'the greatest' }, (err, data) => {
 
 ## API
 
-### `lastfm = new LastFM(key, [userAgent])`
+### `lastfm = new LastFM(key, [opts])`
 
 Create a new LastFM API client with the given public API `key`.
 
 Since all the LastFM calls supported by this module access public data, the secret
 key is not required.
 
-`userAgent` can be a string to use as the `User-Agent` header in http requests.
+If `opts` is provided, it can contain the following options:
+
+- `opts.userAgent` - String to use as the `User-Agent` header in http requests
 
 ## Convenience API
 
