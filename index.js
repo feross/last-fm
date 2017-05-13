@@ -105,8 +105,8 @@ class LastFM {
           name: album.name,
           artistName: album.artist.name || album.artist,
           listeners: (
-            album.playcount && Number(album.playcount) ||
-            album.listeners && Number(album.listeners)
+            (album.playcount && Number(album.playcount)) ||
+            (album.listeners && Number(album.listeners))
           ), // optional
           images: this._parseImages(album.image)
         }
