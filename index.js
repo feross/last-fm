@@ -559,7 +559,7 @@ class LastFM {
         type: 'track',
         name: track.name,
         artistName: track.artist.name,
-        album: track.album.title,
+        albumName: track.album.title,
         listeners: Number(track.listeners),
         duration: Math.ceil(track.duration / 1000),
         images: this._parseImages(track.album.image),
