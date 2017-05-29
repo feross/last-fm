@@ -14,6 +14,7 @@ const IMAGE_WEIGHT = {
 class LastFM {
   constructor (key, opts) {
     if (!key) throw new Error('Missing required `key` argument')
+    opts = opts || {}
     this._key = key
     this._userAgent = opts.userAgent || 'last-fm (https://github.com/feross/last-fm)'
     this._minArtistListeners = opts.minArtistListeners || 0
