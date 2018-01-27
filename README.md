@@ -40,7 +40,7 @@ First, [get an API key](https://www.last.fm/api/account/create) from Last.fm.
 const LastFM = require('last-fm')
 const lastfm = new LastFM('API_KEY', { userAgent: 'MyApp/1.0.0 (http://example.com)' })
 
-lastfm.trackSearch({ track: 'the greatest' }, (err, data) => {
+lastfm.trackSearch({ q: 'the greatest' }, (err, data) => {
   if (err) console.error(err)
   else console.log(data)
 })
