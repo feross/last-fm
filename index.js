@@ -91,6 +91,7 @@ class LastFM {
         return {
           type: 'artist',
           name: artist.name,
+          id: artist.mbid,
           listeners: Number(artist.listeners),
           images: this._parseImages(artist.image)
         }
@@ -105,6 +106,7 @@ class LastFM {
           type: 'album',
           name: album.name,
           artistName: album.artist.name || album.artist,
+          id: album.mbid,
           listeners: (
             (album.playcount && Number(album.playcount)) ||
             (album.listeners && Number(album.listeners))
@@ -126,6 +128,7 @@ class LastFM {
           type: 'track',
           name: track.name,
           artistName: track.artist.name || track.artist,
+          id: track.mbid,
           duration: track.duration && Number(track.duration), // optional
           listeners: listeners && Number(listeners), // optional
           images: track.image && this._parseImages(track.image) // optional
@@ -193,13 +196,14 @@ class LastFM {
    */
 
   albumInfo (opts, cb) {
-    if (!opts.name || !opts.artistName) {
-      return cb(new Error('Missing required params: name, artistName'))
+    if (!(opts.name && opts.artistName) && !opts.id) {
+      return cb(new Error('Missing required params: name and artistName or id'))
     }
     const params = {
       method: 'album.getInfo',
       album: opts.name,
       artist: opts.artistName,
+      mbid: opts.id,
       autocorrect: 1
     }
     this._sendRequest(params, 'album', (err, album) => {
@@ -208,6 +212,7 @@ class LastFM {
         type: 'album',
         name: album.name,
         artistName: album.artist,
+        id: album.mbid,
         images: this._parseImages(album.image),
         listeners: Number(album.playcount) || Number(album.listeners),
         tracks: this._parseTracks(album.tracks.track),
@@ -218,13 +223,14 @@ class LastFM {
   }
 
   albumTopTags (opts, cb) {
-    if (!opts.name || !opts.artistName) {
-      return cb(new Error('Missing required params: name, artistName'))
+    if (!(opts.name && opts.artistName) && !opts.id) {
+      return cb(new Error('Missing required params: name and artistName or id'))
     }
     const params = {
       method: 'album.getTopTags',
       album: opts.name,
       artist: opts.artistName,
+      mbid: opts.id,
       autocorrect: 1
     }
     this._sendRequest(params, 'toptags', cb)
@@ -271,12 +277,13 @@ class LastFM {
   }
 
   artistInfo (opts, cb) {
-    if (!opts.name) {
-      return cb(new Error('Missing required param: name'))
+    if (!opts.name && !opts.id) {
+      return cb(new Error('Missing required param: name or id'))
     }
     const params = {
       method: 'artist.getInfo',
       artist: opts.name,
+      mbid: opts.id,
       autocorrect: 1
     }
     this._sendRequest(params, 'artist', (err, artist) => {
@@ -285,12 +292,14 @@ class LastFM {
         return {
           type: 'artist',
           name: similarArtist.name,
+          id: similarArtist.mbid,
           images: this._parseImages(similarArtist.image)
         }
       })
       cb(null, {
         type: 'artist',
         name: artist.name,
+        id: artist.mbid,
         listeners: Number(artist.stats.listeners),
         images: this._parseImages(artist.image),
         tags: this._parseTags(artist.tags),
@@ -301,12 +310,13 @@ class LastFM {
   }
 
   artistSimilar (opts, cb) {
-    if (!opts.name) {
-      return cb(new Error('Missing required param: name'))
+    if (!opts.name && !opts.id) {
+      return cb(new Error('Missing required param: name or id'))
     }
     const params = {
       method: 'artist.getSimilar',
       artist: opts.name,
+      mbid: opts.id,
       limit: opts.limit,
       autocorrect: 1
     }
@@ -314,12 +324,13 @@ class LastFM {
   }
 
   artistTopAlbums (opts, cb) {
-    if (!opts.name) {
-      return cb(new Error('Missing required param: name'))
+    if (!opts.name && !opts.id) {
+      return cb(new Error('Missing required param: name or id'))
     }
     const params = {
       method: 'artist.getTopAlbums',
       artist: opts.name,
+      mbid: opts.id,
       limit: opts.limit,
       autocorrect: 1
     }
@@ -333,24 +344,26 @@ class LastFM {
   }
 
   artistTopTags (opts, cb) {
-    if (!opts.name) {
-      return cb(new Error('Missing required param: name'))
+    if (!opts.name && !opts.id) {
+      return cb(new Error('Missing required param: name or id'))
     }
     const params = {
       method: 'artist.getTopTags',
       artist: opts.name,
+      mbid: opts.id,
       autocorrect: 1
     }
     this._sendRequest(params, 'toptags', cb)
   }
 
   artistTopTracks (opts, cb) {
-    if (!opts.name) {
-      return cb(new Error('Missing required param: name'))
+    if (!opts.name && !opts.id) {
+      return cb(new Error('Missing required param: name ot id'))
     }
     const params = {
       method: 'artist.getTopTracks',
       artist: opts.name,
+      mbid: opts.id,
       limit: opts.limit,
       autocorrect: 1
     }
@@ -555,13 +568,14 @@ class LastFM {
   }
 
   trackInfo (opts, cb) {
-    if (!opts.name || !opts.artistName) {
-      return cb(new Error('Missing required params: name, artistName'))
+    if (!(opts.name && opts.artistName) && !opts.id) {
+      return cb(new Error('Missing required params: name and artistName or id'))
     }
     const params = {
       method: 'track.getInfo',
       track: opts.name,
       artist: opts.artistName,
+      mbid: opts.id,
       autocorrect: 1
     }
     this._sendRequest(params, 'track', (err, track) => {
@@ -570,6 +584,7 @@ class LastFM {
         type: 'track',
         name: track.name,
         artistName: track.artist.name,
+        id: track.mbid,
         albumName: track.album && track.album.title,
         listeners: Number(track.listeners),
         duration: Math.ceil(track.duration / 1000),
@@ -580,13 +595,14 @@ class LastFM {
   }
 
   trackSimilar (opts, cb) {
-    if (!opts.name || !opts.artistName) {
-      return cb(new Error('Missing required params: name, artistName'))
+    if (!(opts.name && opts.artistName) && !opts.id) {
+      return cb(new Error('Missing required params: name and artistName or id'))
     }
     const params = {
       method: 'track.getSimilar',
       track: opts.name,
       artist: opts.artistName,
+      mbid: opts.id,
       limit: opts.limit,
       autocorrect: 1
     }
@@ -594,13 +610,14 @@ class LastFM {
   }
 
   trackTopTags (opts, cb) {
-    if (!opts.name || !opts.artistName) {
-      return cb(new Error('Missing required params: name, artistName'))
+    if (!(opts.name && opts.artistName) && !opts.id) {
+      return cb(new Error('Missing required params: name and artistName or id'))
     }
     const params = {
       method: 'track.getTopTags',
       track: opts.name,
       artist: opts.artistName,
+      mbid: opts.id,
       autocorrect: 1
     }
     this._sendRequest(params, 'toptags', cb)
