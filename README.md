@@ -1,5 +1,7 @@
 # last-fm [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url]
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/feross/last-fm.svg)](https://greenkeeper.io/)
+
 [travis-image]: https://img.shields.io/travis/feross/last-fm/master.svg
 [travis-url]: https://travis-ci.org/feross/last-fm
 [npm-image]: https://img.shields.io/npm/v/last-fm.svg
