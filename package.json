@@ -1,7 +1,7 @@
 {
   "name": "last-fm",
   "description": "Simple, robust LastFM API client (for public data)",
-  "version": "5.2.1",
+  "version": "5.2.2",
   "author": {
     "name": "Feross Aboukhadijeh",
     "email": "feross@feross.org",
