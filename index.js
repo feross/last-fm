@@ -56,7 +56,7 @@ class LastFM {
       .sort((a, b) => IMAGE_WEIGHT[a.size] - IMAGE_WEIGHT[b.size])
       .filter(image => image.size !== '')
       .map(image => image['#text'])
-      .filter(image => image.length > 0)
+      .filter(image => image && image.length > 0)
   }
 
   _parseMeta (data, query) {
