@@ -197,6 +197,21 @@ Get the top tags for this track on Last.fm, ordered by tag count. Supply a track
 
 Search for a track by track name. Returns track matches sorted by relevance. ([track.search](http://www.last.fm/api/show/track.search))
 
+## User API
+
+### `lastfm.userTopAlbums(opts, (err, data) => {})`
+
+Get the top albums listened to by a user. You can stipulate a time period. Sends the overall chart by default. ([user.userTopAlbums](https://www.last.fm/api/show/user.getTopAlbums))
+
+### `lastfm.userTopArtists(opts, (err, data) => {})`
+Get the top artists listened to by a user. You can stipulate a time period. Sends the overall chart by default. ([user.getTopArtists](https://www.last.fm/api/show/user.getTopArtists))
+
+### `lastfm.userTopTags(opts, (err, data) => {})`
+Get the top tags used by this user. ([user.getTopTags](https://www.last.fm/api/show/user.getTopTags))
+
+### `lastfm.userTopTracks(opts, (err, data) => {})`
+Get the top tracks listened to by a user. You can stipulate a time period. Sends the overall chart by default. ([user.getTopTracks](https://www.last.fm/api/show/user.getTopTracks))
+
 ## License
 
 MIT. Copyright (c) [Feross Aboukhadijeh](http://feross.org).
