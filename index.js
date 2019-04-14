@@ -11,7 +11,7 @@ const IMAGE_WEIGHT = {
   mega: 6,
 };
 
-class LastFM {
+module.exports = class LastFM {
   constructor(key, opts) {
     if (!key) throw new Error('Missing required `key` argument');
     if (!opts) opts = {};
@@ -37,7 +37,6 @@ class LastFM {
       timeout: 30 * 1000,
       json: true,
     };
-
     get.concat(opts, onResponse);
 
     function onResponse(err, res, data) {
@@ -95,6 +94,16 @@ class LastFM {
         images: this._parseImages(artist.image),
       }))
       .filter(artist => artist.listeners == null || artist.listeners >= this._minArtistListeners);
+  }
+
+  _parseArtistsForUser(artists) {
+    return artists
+      .map(artist => ({
+        type: 'artist',
+        name: artist.name,
+        playcount: Number(artist.playcount),
+        images: this._parseImages(artist.image),
+      }))
   }
 
   _parseAlbums(albums) {
@@ -621,6 +630,81 @@ class LastFM {
       });
     });
   }
-}
 
-module.exports = LastFM;
+  /**
+   * USER API
+   */
+
+   userTopAlbums(opts, cb) {
+    if (!opts.user) {
+      return cb(new Error('Missing required param: user'));
+    }
+    const params = {
+      method: 'user.getTopAlbums',
+      user: opts.user,
+      period: opts.period,
+      limit: opts.limit,
+      autocorrect: 1,
+    };
+    this._sendRequest(params, 'topalbums', (err, data) => {
+      if (err) return cb(err);
+      cb(null, {
+        meta: this._parseMeta(data, opts),
+        result: this._parseAlbums(data.album),
+      });
+    });
+  }
+
+  userTopArtists(opts, cb) {
+    if (!opts.user) {
+      return cb(new Error('Missing required param: user'));
+    }
+    const params = {
+      method: 'user.getTopArtists',
+      user: opts.user,
+      period: opts.period,
+      limit: opts.limit,
+      page: opts.page,
+      autocorrect: 1,
+    };
+    this._sendRequest(params, 'topartists', (err, data) => {
+      if (err) return cb(err);
+      cb(null, {
+        meta: this._parseMeta(data, opts),
+        result: this._parseArtistsForUser(data.artist),
+      });
+    });
+  }
+
+  userTopTags(opts, cb) {
+    if (!opts.user) {
+      return cb(new Error('Missing required params: user'));
+    }
+    const params = {
+      method: 'user.getTopTags',
+      user: opts.user,
+      autocorrect: 1,
+    };
+    this._sendRequest(params, 'toptags', cb);
+  }
+
+  userTopTracks(opts, cb) {
+    if (!opts.user) {
+      return cb(new Error('Missing required param: user'));
+    }
+    const params = {
+      method: 'user.getTopTracks',
+      user: opts.user,
+      period: opts.period,
+      limit: opts.limit,
+      autocorrect: 1,
+    };
+    this._sendRequest(params, 'toptracks', (err, data) => {
+      if (err) return cb(err);
+      cb(null, {
+        meta: this._parseMeta(data, opts),
+        result: this._parseTracks(data.track),
+      });
+    });
+  }
+};
