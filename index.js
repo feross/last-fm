@@ -120,6 +120,17 @@ module.exports = class LastFM {
       }))
   }
 
+  _parseAlbumsForUser (albums) {
+    return albums
+      .map(album => ({
+        type: 'album',
+        name: album.name,
+        artistName: album.artist.name || album.artist,
+        playcount: Number(album.playcount),
+        images: this._parseImages(album.image)
+      }))
+  }
+
   _parseTags (tags) {
     return tags.tag.map(t => t.name)
   }
@@ -650,7 +661,7 @@ module.exports = class LastFM {
       if (err) return cb(err)
       cb(null, {
         meta: this._parseMeta(data, opts),
-        result: this._parseAlbums(data.album)
+        result: this._parseAlbumsForUser(data.album)
       })
     })
   }
