@@ -1,3 +1,4 @@
+/*! last-fm. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 const get = require('simple-get')
 const querystring = require('querystring')
 const parallel = require('run-parallel')
