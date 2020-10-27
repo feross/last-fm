@@ -614,7 +614,8 @@ class LastFM {
       method: 'track.search',
       limit: opts.limit,
       page: opts.page,
-      track: opts.q
+      track: opts.q,
+      artist: opts.artist // narrow search by artist (optional)
     }
     this._sendRequest(params, 'results', (err, data) => {
       if (err) return cb(err)
