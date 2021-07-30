@@ -116,7 +116,13 @@ class LastFM {
   }
 
   _parseTags (tags) {
-    return tags.tag.map(t => t.name)
+    if (!tags || !tags.tag) {
+      return [];
+    } else if (tags.tag instanceof Array) {
+      return tags.tag.map(t => t.name)
+    } else {
+      return [tags.tag.name];
+    }
   }
 
   _parseTracks (tracks) {
