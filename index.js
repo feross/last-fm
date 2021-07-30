@@ -116,7 +116,7 @@ class LastFM {
   }
 
   _parseTags (tags) {
-    return tags.tag.map(t => t.name)
+    return tags && tags.tag ? tags.tag.map(t => t.name) : []
   }
 
   _parseTracks (tracks) {
